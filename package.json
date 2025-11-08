@@ -1,12 +1,7 @@
 {
-  "name": "lunch-mvp",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node index.js"
-  },
   "dependencies": {
     "express": "^4.18.0",
-    "mongoose": "^7.0.0",
+    "mysql2": "^3.6.0",  // För MariaDB/MySQL
     "qrcode": "^1.5.0"
   }
 }
