@@ -28,7 +28,7 @@ pool.getConnection().then(conn => {
 app.post('/admin/add', async (req, res) => {
   try {
     const pnr = req.body.pnr;
-    const cleanPnr = pnr?.replace(/[-\s]/g, '');
+    const cleanPnr = (pnr || '').replace(/[-\s]/g, '');
 
     if (!cleanPnr || cleanPnr.length !== 12 || !/^\d+$/.test(cleanPnr)) {
       return res.status(400).json({ error: 'Ogiltigt personnummer – ange 12 siffror (t.ex. 197708251991)' });
