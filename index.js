@@ -9,9 +9,9 @@ app.use(express.static('public'));
 // Anslut till Oderlands MariaDB/MySQL (använd dina uppgifter)
 const dbConfig = {
   host: 'localhost',  // Oderland: Oftast localhost
-  user: 'johnnynu/lunchkuponger',  // Från phpMyAdmin
+  user: 'johnnynu/lunch',  // Från phpMyAdmin
   password: 'Jk2025lunch',
-  database: 'johnnynu_lunchkuponger_db',
+  database: 'johnnynu_lunch_db',
   port: 3306
 };
 
