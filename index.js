@@ -20,25 +20,33 @@ const User = mongoose.model('User', new mongoose.Schema({
 
 // === ADMIN: Lägg till kund ===
 app.post('/admin/add', async (req, res) => {
-  const { pnr } = req.body;
-  if (!pnr || pnr.length < 10) return res.status(400).json({ error: 'Ogiltigt personnummer' });
+  try {
+    const pnr = req.body.pnr;
+    const cleanPnr = pnr?.replace(/[-\s]/g, '');  // Rensa format
 
-  const token = Math.random().toString(36).substr(2, 9);
-  const user = new User({ pnr, qrToken: token });
-  await user.save();
+    if (!cleanPnr || cleanPnr.length !== 12 || !/^\d+$/.test(cleanPnr)) {
+      return res.status(400).json({ error: 'Ogiltigt personnummer – ange 12 siffror (t.ex. 197708251991)' });
+    }
 
-  const qrUrl = `https://${req.headers.host}/qr/${token}`;
-  const qrImage = await qrcode.toDataURL(qrUrl);
+    const token = Math.random().toString(36).substr(2, 9);
+    const user = new User({ pnr: cleanPnr, qrToken: token });
+    await user.save();
 
-  res.send(`
-    <h2>Kund tillagd!</h2>
-    <p>Personnummer: ${pnr}</p>
-    <p>Saldo: 10 luncher</p>
-    <img src="${qrImage}" alt="QR-kod">
-    <p><a href="/qr/${token}" target="_blank">Öppna QR-sida</a></p>
-    <hr>
-    <a href="/">Tillbaka</a>
-  `);
+    const qrUrl = `https://${req.get('host')}/qr/${token}`;
+    const qrImage = await qrcode.toDataURL(qrUrl);
+
+    res.send(`
+      <h2>Kund tillagd!</h2>
+      <p>Personnummer: ${cleanPnr}</p>
+      <p>Saldo: 10 luncher</p>
+      <img src="${qrImage}" alt="QR-kod">
+      <p><a href="/qr/${token}" target="_blank">Öppna QR-sida</a></p>
+      <hr>
+      <a href="/">Tillbaka</a>
+    `);
+  } catch (err) {
+    res.status(500).send('Fel: ' + err.message);
+  }
 });
 
 // === QR-sida för kund ===
